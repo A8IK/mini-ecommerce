@@ -22,264 +22,267 @@ const Products = ({
 }) => {
 
   // Product Card Component
-  const ProductCard = ({ product }) => (
-    <div style={{
-      position: 'relative',
-      background: 'rgba(255, 255, 255, 0.95)',
-      backdropFilter: 'blur(10px)',
-      borderRadius: '1.5rem',
-      padding: '0',
-      boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
-      border: '1px solid rgba(255, 255, 255, 0.2)',
-      transition: 'all 0.4s ease',
-      cursor: 'pointer',
-      overflow: 'hidden'
-    }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.transform = 'translateY(-8px)';
-      e.currentTarget.style.boxShadow = '0 30px 60px rgba(124, 58, 237, 0.2)';
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.transform = 'translateY(0)';
-      e.currentTarget.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.1)';
-    }}>
-      
-      {/* Badge */}
-      {product.badge && (
-        <div style={{
-          position: 'absolute',
-          top: '1rem',
-          left: '1rem',
-          zIndex: 10,
-          background: product.badge === 'Bestseller' ? '#f97316' :
-                     product.badge === 'Premium' ? '#7c3aed' :
-                     product.badge === 'New' ? '#10b981' :
-                     product.badge === 'Hot' ? '#ef4444' : '#3b82f6',
-          color: 'white',
-          padding: '0.25rem 0.75rem',
-          borderRadius: '9999px',
-          fontSize: '0.75rem',
-          fontWeight: 'bold'
-        }}>
-          {product.badge}
-        </div>
-      )}
-
-      {/* Wishlist Button */}
-      <button
-        onClick={(e) => { e.stopPropagation(); toggleWishlist(product._id); }}
-        style={{
-          position: 'absolute',
-          top: '1rem',
-          right: '1rem',
-          zIndex: 10,
-          background: 'rgba(255, 255, 255, 0.9)',
-          backdropFilter: 'blur(10px)',
-          border: 'none',
-          borderRadius: '50%',
-          width: '40px',
-          height: '40px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease'
-        }}
-      >
-        <Heart 
-          size={20} 
-          style={{ 
-            color: wishlist.includes(product._id) ? '#ef4444' : '#6b7280',
-            fill: wishlist.includes(product._id) ? '#ef4444' : 'none'
-          }} 
-        />
-      </button>
-
-      <div onClick={() => { setSelectedProduct(product); setCurrentPage('product'); }}>
-        {/* Product Image */}
-        <div style={{ position: 'relative', overflow: 'hidden' }}>
-          <img 
-            src={product.image} 
-            alt={product.title}
-            style={{
-              width: '100%',
-              height: '250px',
-              objectFit: 'cover',
-              transition: 'transform 0.6s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.transform = 'scale(1.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = 'scale(1)';
-            }}
-          />
-        </div>
-
-        {/* Product Info */}
-        <div style={{ padding: '1.5rem' }}>
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center', 
-            marginBottom: '0.5rem' 
+  const ProductCard = ({ product }) => {
+    const isThisProductLoading = cartLoading === product._id;
+    
+    return (
+      <div style={{
+        position: 'relative',
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '1.5rem',
+        padding: '0',
+        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        transition: 'all 0.4s ease',
+        cursor: 'pointer',
+        overflow: 'hidden'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-8px)';
+        e.currentTarget.style.boxShadow = '0 30px 60px rgba(124, 58, 237, 0.2)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.1)';
+      }}>
+        
+        {/* Badge */}
+        {product.badge && (
+          <div style={{
+            position: 'absolute',
+            top: '1rem',
+            left: '1rem',
+            zIndex: 10,
+            background: product.badge === 'Bestseller' ? '#f97316' :
+                       product.badge === 'Premium' ? '#7c3aed' :
+                       product.badge === 'New' ? '#10b981' :
+                       product.badge === 'Hot' ? '#ef4444' : '#3b82f6',
+            color: 'white',
+            padding: '0.25rem 0.75rem',
+            borderRadius: '9999px',
+            fontSize: '0.75rem',
+            fontWeight: 'bold'
           }}>
-            <span style={{
-              background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
-              color: 'white',
-              padding: '0.25rem 0.75rem',
-              borderRadius: '9999px',
-              fontSize: '0.75rem',
-              fontWeight: '600'
-            }}>
-              {product.category}
-            </span>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Star size={16} style={{ color: '#fbbf24', fill: '#fbbf24' }} />
-              <span style={{ 
-                marginLeft: '0.25rem', 
-                fontSize: '0.875rem', 
-                fontWeight: '600',
-                color: '#374151' 
-              }}>
-                {product.rating}
-              </span>
-              <span style={{ 
-                marginLeft: '0.25rem', 
-                fontSize: '0.75rem', 
-                color: '#9ca3af' 
-              }}>
-                ({product.reviews})
-              </span>
-            </div>
+            {product.badge}
           </div>
+        )}
 
-          <h3 style={{
-            fontSize: '1.25rem',
-            fontWeight: 'bold',
-            color: '#1f2937',
-            marginBottom: '0.75rem',
-            lineHeight: '1.3',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden'
-          }}>
-            {product.title}
-          </h3>
-
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.5rem', 
-            marginBottom: '1rem' 
-          }}>
-            <span style={{
-              fontSize: '1.75rem',
-              fontWeight: 'bold',
-              background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent'
-            }}>
-              ${product.price}
-            </span>
-            {product.originalPrice && (
-              <span style={{
-                fontSize: '1rem',
-                color: '#9ca3af',
-                textDecoration: 'line-through'
-              }}>
-                ${product.originalPrice}
-              </span>
-            )}
-          </div>
-
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '1rem', 
-            marginBottom: '1rem',
-            fontSize: '0.875rem'
-          }}>
-            {product.inStock ? (
-              <div style={{ display: 'flex', alignItems: 'center', color: '#10b981' }}>
-                <div style={{
-                  width: '8px',
-                  height: '8px',
-                  backgroundColor: '#10b981',
-                  borderRadius: '50%',
-                  marginRight: '0.5rem'
-                }}></div>
-                In Stock
-              </div>
-            ) : (
-              <div style={{ display: 'flex', alignItems: 'center', color: '#ef4444' }}>
-                <div style={{
-                  width: '8px',
-                  height: '8px',
-                  backgroundColor: '#ef4444',
-                  borderRadius: '50%',
-                  marginRight: '0.5rem'
-                }}></div>
-                Out of Stock
-              </div>
-            )}
-            
-            {product.fastDelivery && (
-              <div style={{ display: 'flex', alignItems: 'center', color: '#3b82f6' }}>
-                <Truck size={16} style={{ marginRight: '0.25rem' }} />
-                Fast Delivery
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Add to Cart Button */}
-      <div style={{ padding: '0 1.5rem 1.5rem' }}>
+        {/* Wishlist Button */}
         <button
-          onClick={(e) => { 
-            e.stopPropagation(); 
-            if (product.inStock && !cartLoading) addToCart(product); 
-          }}
-          disabled={!product.inStock || cartLoading}
+          onClick={(e) => { e.stopPropagation(); toggleWishlist(product._id); }}
           style={{
-            width: '100%',
-            padding: '0.75rem 1rem',
-            borderRadius: '1rem',
+            position: 'absolute',
+            top: '1rem',
+            right: '1rem',
+            zIndex: 10,
+            background: 'rgba(255, 255, 255, 0.9)',
+            backdropFilter: 'blur(10px)',
             border: 'none',
-            background: product.inStock && !cartLoading
-              ? 'linear-gradient(135deg, #7c3aed, #3b82f6)' 
-              : '#d1d5db',
-            color: product.inStock && !cartLoading ? 'white' : '#9ca3af',
-            fontWeight: 'bold',
-            fontSize: '1rem',
-            cursor: product.inStock && !cartLoading ? 'pointer' : 'not-allowed',
-            transition: 'all 0.2s ease',
+            borderRadius: '50%',
+            width: '40px',
+            height: '40px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '0.5rem'
-          }}
-          onMouseEnter={(e) => {
-            if (product.inStock && !cartLoading) {
-              e.target.style.transform = 'scale(1.05)';
-              e.target.style.boxShadow = '0 10px 25px rgba(124, 58, 237, 0.3)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (product.inStock && !cartLoading) {
-              e.target.style.transform = 'scale(1)';
-              e.target.style.boxShadow = 'none';
-            }
+            cursor: 'pointer',
+            transition: 'all 0.2s ease'
           }}
         >
-          <Plus size={20} />
-          {cartLoading ? 'Adding...' : product.inStock ? 'Add to Cart' : 'Out of Stock'}
+          <Heart 
+            size={20} 
+            style={{ 
+              color: wishlist.includes(product._id) ? '#ef4444' : '#6b7280',
+              fill: wishlist.includes(product._id) ? '#ef4444' : 'none'
+            }} 
+          />
         </button>
+
+        <div onClick={() => { setSelectedProduct(product); setCurrentPage('product'); }}>
+          {/* Product Image */}
+          <div style={{ position: 'relative', overflow: 'hidden' }}>
+            <img 
+              src={product.image} 
+              alt={product.title}
+              style={{
+                width: '100%',
+                height: '250px',
+                objectFit: 'cover',
+                transition: 'transform 0.6s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'scale(1.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'scale(1)';
+              }}
+            />
+          </div>
+
+          {/* Product Info */}
+          <div style={{ padding: '1.5rem' }}>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: '0.5rem' 
+            }}>
+              <span style={{
+                background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
+                color: 'white',
+                padding: '0.25rem 0.75rem',
+                borderRadius: '9999px',
+                fontSize: '0.75rem',
+                fontWeight: '600'
+              }}>
+                {product.category}
+              </span>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Star size={16} style={{ color: '#fbbf24', fill: '#fbbf24' }} />
+                <span style={{ 
+                  marginLeft: '0.25rem', 
+                  fontSize: '0.875rem', 
+                  fontWeight: '600',
+                  color: '#374151' 
+                }}>
+                  {product.rating}
+                </span>
+                <span style={{ 
+                  marginLeft: '0.25rem', 
+                  fontSize: '0.75rem', 
+                  color: '#9ca3af' 
+                }}>
+                  ({product.reviews})
+                </span>
+              </div>
+            </div>
+
+            <h3 style={{
+              fontSize: '1.25rem',
+              fontWeight: 'bold',
+              color: '#1f2937',
+              marginBottom: '0.75rem',
+              lineHeight: '1.3',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden'
+            }}>
+              {product.title}
+            </h3>
+
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.5rem', 
+              marginBottom: '1rem' 
+            }}>
+              <span style={{
+                fontSize: '1.75rem',
+                fontWeight: 'bold',
+                background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}>
+                ${product.price}
+              </span>
+              {product.originalPrice && (
+                <span style={{
+                  fontSize: '1rem',
+                  color: '#9ca3af',
+                  textDecoration: 'line-through'
+                }}>
+                  ${product.originalPrice}
+                </span>
+              )}
+            </div>
+
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '1rem', 
+              marginBottom: '1rem',
+              fontSize: '0.875rem'
+            }}>
+              {product.inStock ? (
+                <div style={{ display: 'flex', alignItems: 'center', color: '#10b981' }}>
+                  <div style={{
+                    width: '8px',
+                    height: '8px',
+                    backgroundColor: '#10b981',
+                    borderRadius: '50%',
+                    marginRight: '0.5rem'
+                  }}></div>
+                  In Stock
+                </div>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', color: '#ef4444' }}>
+                  <div style={{
+                    width: '8px',
+                    height: '8px',
+                    backgroundColor: '#ef4444',
+                    borderRadius: '50%',
+                    marginRight: '0.5rem'
+                  }}></div>
+                  Out of Stock
+                </div>
+              )}
+              
+              {product.fastDelivery && (
+                <div style={{ display: 'flex', alignItems: 'center', color: '#3b82f6' }}>
+                  <Truck size={16} style={{ marginRight: '0.25rem' }} />
+                  Fast Delivery
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div style={{ padding: '0 1.5rem 1.5rem' }}>
+          <button
+            onClick={(e) => { 
+              e.stopPropagation(); 
+              if (product.inStock && !isThisProductLoading) addToCart(product); 
+            }}
+            disabled={!product.inStock || isThisProductLoading}
+            style={{
+              width: '100%',
+              padding: '0.75rem 1rem',
+              borderRadius: '1rem',
+              border: 'none',
+              background: product.inStock && !isThisProductLoading
+                ? 'linear-gradient(135deg, #7c3aed, #3b82f6)' 
+                : '#d1d5db',
+              color: product.inStock && !isThisProductLoading ? 'white' : '#9ca3af',
+              fontWeight: 'bold',
+              fontSize: '1rem',
+              cursor: product.inStock && !isThisProductLoading ? 'pointer' : 'not-allowed',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem'
+            }}
+            onMouseEnter={(e) => {
+              if (product.inStock && !isThisProductLoading) {
+                e.target.style.transform = 'scale(1.05)';
+                e.target.style.boxShadow = '0 10px 25px rgba(124, 58, 237, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (product.inStock && !isThisProductLoading) {
+                e.target.style.transform = 'scale(1)';
+                e.target.style.boxShadow = 'none';
+              }
+            }}
+          >
+            <Plus size={20} />
+            {isThisProductLoading ? 'Adding...' : product.inStock ? 'Add to Cart' : 'Out of Stock'}
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   // Home Page Content
   if (currentPage === 'home') {
@@ -362,7 +365,6 @@ const Products = ({
           ))}
         </div>
 
-        {/* Loading State for Products */}
         {productsLoading && (
           <div style={{ textAlign: 'center', padding: '3rem 0' }}>
             <div style={{
@@ -393,7 +395,7 @@ const Products = ({
               ))}
             </div>
 
-            {/* ADD PAGINATION COMPONENT HERE */}
+            {/* ADD PAGINATION */}
             {pagination && pagination.totalPages > 1 && (
               <Pagination 
                 currentPage={pagination.currentPage}
@@ -438,8 +440,9 @@ const Products = ({
     );
   }
 
-  // Product Detail Page - MOBILE RESPONSIVE
   if (currentPage === 'product' && selectedProduct) {
+    const isThisProductLoading = cartLoading === selectedProduct._id;
+    
     return (
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
         <button
@@ -569,31 +572,31 @@ const Products = ({
               
               <button
                 onClick={() => addToCart(selectedProduct)}
-                disabled={!selectedProduct.inStock || cartLoading}
+                disabled={!selectedProduct.inStock || isThisProductLoading}
                 style={{
                   width: '100%',
                   padding: window.innerWidth <= 768 ? '0.875rem' : '1rem',
                   borderRadius: '1rem',
                   border: 'none',
-                  background: selectedProduct.inStock && !cartLoading
+                  background: selectedProduct.inStock && !isThisProductLoading
                     ? 'linear-gradient(135deg, #7c3aed, #3b82f6)' 
                     : '#d1d5db',
-                  color: selectedProduct.inStock && !cartLoading ? 'white' : '#9ca3af',
+                  color: selectedProduct.inStock && !isThisProductLoading ? 'white' : '#9ca3af',
                   fontWeight: 'bold',
                   fontSize: window.innerWidth <= 768 ? '1rem' : '1.2rem',
-                  cursor: selectedProduct.inStock && !cartLoading ? 'pointer' : 'not-allowed',
+                  cursor: selectedProduct.inStock && !isThisProductLoading ? 'pointer' : 'not-allowed',
                   transition: 'all 0.3s ease',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '0.75rem',
-                  boxShadow: selectedProduct.inStock && !cartLoading
+                  boxShadow: selectedProduct.inStock && !isThisProductLoading
                     ? '0 4px 12px rgba(124, 58, 237, 0.3)' 
                     : 'none'
                 }}
               >
                 <Plus size={window.innerWidth <= 768 ? 20 : 24} />
-                {cartLoading ? 'Adding...' : selectedProduct.inStock ? 'Add to Cart' : 'Out of Stock'}
+                {isThisProductLoading ? 'Adding...' : selectedProduct.inStock ? 'Add to Cart' : 'Out of Stock'}
               </button>
             </div>
           </div>

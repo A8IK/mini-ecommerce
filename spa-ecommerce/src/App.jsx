@@ -32,7 +32,11 @@ const ECommerceApp = () => {
   // Loading and error states
   const [isLoading, setIsLoading] = useState(true);
   const [productsLoading, setProductsLoading] = useState(false);
-  const [cartLoading, setCartLoading] = useState(false);
+  
+  // 🎯 FIXED: Changed cartLoading to store product ID instead of boolean
+  const [cartLoading, setCartLoading] = useState(null); // null or product._id for specific product loading
+  const [generalCartLoading, setGeneralCartLoading] = useState(false); // for general cart operations
+  
   const [error, setError] = useState(null);
   
   // Session management
@@ -89,14 +93,14 @@ const ECommerceApp = () => {
   // Fetch cart from backend
   const fetchCart = async () => {
     try {
-      setCartLoading(true);
+      setGeneralCartLoading(true);
       const cartData = await ApiService.getCart(sessionId);
       setCart(cartData.items || []);
     } catch (error) {
       console.error('Error fetching cart:', error);
       setCart([]);
     } finally {
-      setCartLoading(false);
+      setGeneralCartLoading(false);
     }
   };
 
@@ -153,13 +157,16 @@ const ECommerceApp = () => {
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
   const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
 
+// 🎯 FIXED: addToCart now sets cartLoading to specific product ID
 const addToCart = async (product, event = null) => {
   try {
-    setCartLoading(true);
+    // Set loading to THIS specific product's ID
+    setCartLoading(product._id);
+    
     await ApiService.addToCart(sessionId, product._id, 1, product.price);
     await fetchCart(); 
 
-    alert(` ${product.title} added to cart successfully!`);
+    alert(`${product.title} added to cart successfully!`);
 
     if (event && event.target) {
       const button = event.target;
@@ -173,16 +180,17 @@ const addToCart = async (product, event = null) => {
     }
   } catch (error) {
     console.error('Error adding to cart:', error);
-    alert(' Failed to add item to cart. Please try again.');
+    alert('Failed to add item to cart. Please try again.');
   } finally {
-    setCartLoading(false);
+    // Reset loading state
+    setCartLoading(null);
   }
 };
 
   // Update cart quantity
   const updateQuantity = async (productId, newQuantity) => {
     try {
-      setCartLoading(true);
+      setGeneralCartLoading(true);
       if (newQuantity <= 0) {
         // Remove item if quantity is 0 or less
         const updatedCart = cart.filter(item => item.productId._id !== productId);
@@ -194,7 +202,7 @@ const addToCart = async (product, event = null) => {
       console.error('Error updating cart:', error);
       await fetchCart(); 
     } finally {
-      setCartLoading(false);
+      setGeneralCartLoading(false);
     }
   };
 
@@ -225,7 +233,7 @@ const addToCart = async (product, event = null) => {
     }
 
     try {
-      setCartLoading(true);
+      setGeneralCartLoading(true);
       await ApiService.createOrder(sessionId, checkoutForm);
       setOrderPlaced(true);
       
@@ -239,7 +247,7 @@ const addToCart = async (product, event = null) => {
       console.error('Error placing order:', error);
       alert('Failed to place order. Please try again.');
     } finally {
-      setCartLoading(false);
+      setGeneralCartLoading(false);
     }
   };
 
@@ -405,7 +413,7 @@ const addToCart = async (product, event = null) => {
           addToCart={addToCart}
           toggleWishlist={toggleWishlist}
           wishlist={wishlist}
-          cartLoading={cartLoading}
+          cartLoading={cartLoading} // 🎯 Now passes product ID or null
           setSelectedProduct={setSelectedProduct}
           selectedProduct={selectedProduct}
           searchQuery={searchQuery}
@@ -424,7 +432,7 @@ const addToCart = async (product, event = null) => {
         isCartOpen={isCartOpen}
         setIsCartOpen={setIsCartOpen}
         cart={cart}
-        cartLoading={cartLoading}
+        cartLoading={generalCartLoading} // 🎯 Uses general loading for cart operations
         updateQuantity={updateQuantity}
         cartTotal={cartTotal}
         cartItemCount={cartItemCount}
@@ -439,7 +447,7 @@ const addToCart = async (product, event = null) => {
         checkoutForm={checkoutForm}
         setCheckoutForm={setCheckoutForm}
         handleCheckout={handleCheckout}
-        cartLoading={cartLoading}
+        cartLoading={generalCartLoading} // 🎯 Uses general loading for checkout
         cartTotal={cartTotal}
       />
       
