@@ -148,32 +148,78 @@ const Checkout = ({
                   color: '#374151',
                   marginBottom: '0.5rem'
                 }}>
-                  Email Address
+                  Email Address <span style={{ color: '#ef4444' }}>*</span>
                 </label>
                 <input
                   type="email"
                   required
                   value={checkoutForm.email}
                   onChange={(e) => setCheckoutForm({...checkoutForm, email: e.target.value})}
-                  placeholder="Enter your email"
+                  placeholder="Enter your email (e.g., user@example.com)"
                   style={{
                     width: '100%',
                     padding: '0.75rem 1rem',
-                    border: '2px solid #e5e7eb',
+                    border: (() => {
+                      if (!checkoutForm.email) return '2px solid #e5e7eb';
+                      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                      return emailRegex.test(checkoutForm.email) ? '2px solid #10b981' : '2px solid #ef4444';
+                    })(),
                     borderRadius: '1rem',
                     fontSize: '1rem',
                     transition: 'all 0.2s ease',
-                    background: 'white'
+                    background: 'white',
+                    outline: 'none'
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = '#7c3aed';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(124, 58, 237, 0.1)';
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (checkoutForm.email && !emailRegex.test(checkoutForm.email)) {
+                      e.target.style.borderColor = '#ef4444';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+                    } else {
+                      e.target.style.borderColor = '#7c3aed';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(124, 58, 237, 0.1)';
+                    }
                   }}
                   onBlur={(e) => {
-                    e.target.style.borderColor = '#e5e7eb';
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (checkoutForm.email && !emailRegex.test(checkoutForm.email)) {
+                      e.target.style.borderColor = '#ef4444';
+                    } else if (checkoutForm.email) {
+                      e.target.style.borderColor = '#10b981';
+                    } else {
+                      e.target.style.borderColor = '#e5e7eb';
+                    }
                     e.target.style.boxShadow = 'none';
                   }}
                 />
+                
+                {/* Validation Messages */}
+                {checkoutForm.email && (() => {
+                  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                  if (!emailRegex.test(checkoutForm.email)) {
+                    return (
+                      <p style={{
+                        color: '#ef4444',
+                        fontSize: '0.75rem',
+                        marginTop: '0.25rem',
+                        marginLeft: '0.25rem'
+                      }}>
+                        ⚠️ Please enter a valid email address (must contain @ and domain)
+                      </p>
+                    );
+                  } else {
+                    return (
+                      <p style={{
+                        color: '#10b981',
+                        fontSize: '0.75rem',
+                        marginTop: '0.25rem',
+                        marginLeft: '0.25rem'
+                      }}>
+                        Valid email format
+                      </p>
+                    );
+                  }
+                })()}
               </div>
               
               <div>

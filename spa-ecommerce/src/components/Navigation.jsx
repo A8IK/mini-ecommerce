@@ -78,20 +78,20 @@ const Navigation = ({
         paddingBottom: '0.75rem',
         background: 'rgba(255, 255, 255, 0.7)',
         backdropFilter: 'blur(10px)',
-        border: '2px solid rgba(124, 58, 237, 0.2)', // Updated border
+        border: '2px solid rgba(124, 58, 237, 0.2)', 
         borderRadius: '1rem',
         fontSize: '1rem',
         transition: 'all 0.2s ease',
-        outline: 'none' // Remove default outline
+        outline: 'none' 
       }}
       onFocus={(e) => {
         e.target.style.background = 'rgba(255, 255, 255, 0.9)';
-        e.target.style.borderColor = '#7c3aed'; // Purple border on focus
+        e.target.style.borderColor = '#7c3aed'; 
         e.target.style.boxShadow = '0 0 0 3px rgba(124, 58, 237, 0.1)';
       }}
       onBlur={(e) => {
         e.target.style.background = 'rgba(255, 255, 255, 0.7)';
-        e.target.style.borderColor = 'rgba(124, 58, 237, 0.2)'; // Return to subtle border
+        e.target.style.borderColor = 'rgba(124, 58, 237, 0.2)'; 
         e.target.style.boxShadow = 'none';
       }}
     />
