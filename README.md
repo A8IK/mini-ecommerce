@@ -1,7 +1,7 @@
 Premium E-commerce Platform
 
 A modern, full-stack e-commerce application built with React and Node.js, featuring a beautiful UI, real-time cart management, and seamless shopping experience.
-## ✨ Features
+##  Features
 
 - ** Modern UI/UX**: Beautiful, responsive design with glassmorphism effects
 - ** Product Catalog**: Browse premium products with detailed views
@@ -71,9 +71,9 @@ npm install
 Start Backend Server
 cd backend
 npm start
-Backend will run on http://localhost:5000
+Backend should run on http://localhost:5000
 
 ## Start Frontend Development Server
 cd spa-ecommerce
 npm run dev
-Open your browser and visit: http://localhost:5173
+Backend should run on: http://localhost:5173
