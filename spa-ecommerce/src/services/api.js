@@ -26,12 +26,11 @@ class ApiService {
   }
 
   // Products API
-  async getProducts(filters = {}) {
-    const queryParams = new URLSearchParams(filters).toString();
-    const endpoint = queryParams ? `/products?${queryParams}` : '/products';
-    const result = await this.request(endpoint);
-    return result.products || result;
-  }
+  async getProducts(queryString = '') {
+  const endpoint = queryString ? `/products?${queryString}` : '/products';
+  const result = await this.request(endpoint);
+  return result; 
+}
 
   async getProduct(id) {
     return this.request(`/products/single/${id}`);

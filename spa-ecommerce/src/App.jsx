@@ -23,6 +23,11 @@ const ECommerceApp = () => {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+
+  const [currentPageNum, setCurrentPageNum] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [productsPerPage] = useState(6);
   
   // Loading and error states
   const [isLoading, setIsLoading] = useState(true);
@@ -41,19 +46,45 @@ const ECommerceApp = () => {
   });
 
   // Fetch products from backend
-  const fetchProducts = async (filters = {}) => {
-    try {
-      setProductsLoading(true);
-      setError(null);
-      const data = await ApiService.getProducts(filters);
-      setProducts(data);
-    } catch (error) {
-      setError('Failed to load products. Please check if the backend server is running.');
-      console.error('Error fetching products:', error);
-    } finally {
-      setProductsLoading(false);
+  const fetchProducts = async (filters = {}, page = 1) => {
+  try {
+    setProductsLoading(true);
+    setError(null);
+    
+    // Build query parameters with pagination
+    const allParams = {
+      page: page.toString(),
+      limit: productsPerPage.toString(),
+      ...filters
+    };
+    
+    console.log('🚀 Sending params:', allParams);
+    
+    const queryString = new URLSearchParams(allParams).toString();
+    const data = await ApiService.getProducts(queryString);
+    
+    console.log('📦 API Response:', data);
+    
+    // Set products
+    setProducts(data.products || data);
+    
+    // Set pagination info
+    if (data.pagination) {
+      console.log('✅ Setting pagination:', data.pagination);
+      setTotalPages(data.pagination.totalPages);
+      setTotalProducts(data.pagination.totalProducts);
+      setCurrentPageNum(data.pagination.currentPage);
+    } else {
+      console.log('❌ No pagination data received');
     }
-  };
+    
+  } catch (error) {
+    setError('Failed to load products. Please check if the backend server is running.');
+    console.error('Error fetching products:', error);
+  } finally {
+    setProductsLoading(false);
+  }
+};
 
   // Fetch cart from backend
   const fetchCart = async () => {
@@ -84,7 +115,26 @@ const ECommerceApp = () => {
   }, []);
 
   // Filter products based on search and category
-  useEffect(() => {
+ useEffect(() => {
+  const filters = {};
+  if (selectedCategory !== 'All') {
+    filters.category = selectedCategory;
+  }
+  if (searchQuery.trim()) {
+    filters.search = searchQuery.trim();
+  }
+  
+  // Reset to page 1 when filters change
+  setCurrentPageNum(1);
+  fetchProducts(filters, 1);
+}, [searchQuery, selectedCategory]);
+
+  const categories = ['All', ...new Set(products.map(p => p.category))];
+
+  const handlePageChange = (newPage) => {
+  if (newPage >= 1 && newPage <= totalPages) {
+    setCurrentPageNum(newPage);
+    
     const filters = {};
     if (selectedCategory !== 'All') {
       filters.category = selectedCategory;
@@ -93,10 +143,12 @@ const ECommerceApp = () => {
       filters.search = searchQuery.trim();
     }
     
-    fetchProducts(filters);
-  }, [searchQuery, selectedCategory]);
-
-  const categories = ['All', ...new Set(products.map(p => p.category))];
+    fetchProducts(filters, newPage);
+    
+    // Scroll to top when page changes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+};
 
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
   const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
@@ -357,6 +409,13 @@ const addToCart = async (product, event = null) => {
           setSelectedProduct={setSelectedProduct}
           selectedProduct={selectedProduct}
           searchQuery={searchQuery}
+          pagination={{
+            currentPage: currentPageNum,
+            totalPages,
+            totalProducts,
+            productsPerPage,
+            handlePageChange
+          }}
         />
       </div>
 

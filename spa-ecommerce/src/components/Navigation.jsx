@@ -48,54 +48,55 @@ const Navigation = ({
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent'
           }}>
-            LuxeStore
+            Mini-commerce
           </h1>
         </div>
 
         {/* Search Bar */}
         <div style={{ flex: 1, maxWidth: '400px', margin: '0 2rem' }}>
-          <div style={{ position: 'relative' }}>
-            <Search 
-              size={20} 
-              style={{
-                position: 'absolute',
-                left: '1rem',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: '#9ca3af'
-              }}
-            />
-            <input
-              type="text"
-              placeholder="Search premium products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                width: '100%',
-                paddingLeft: '3rem',
-                paddingRight: '1rem',
-                paddingTop: '0.75rem',
-                paddingBottom: '0.75rem',
-                background: 'rgba(255, 255, 255, 0.7)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
-                borderRadius: '1rem',
-                fontSize: '1rem',
-                transition: 'all 0.2s ease'
-              }}
-              onFocus={(e) => {
-                e.target.style.background = 'rgba(255, 255, 255, 0.9)';
-                e.target.style.borderColor = '#7c3aed';
-                e.target.style.boxShadow = '0 0 0 3px rgba(124, 58, 237, 0.1)';
-              }}
-              onBlur={(e) => {
-                e.target.style.background = 'rgba(255, 255, 255, 0.7)';
-                e.target.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-                e.target.style.boxShadow = 'none';
-              }}
-            />
-          </div>
-        </div>
+  <div style={{ position: 'relative' }}>
+    <Search 
+      size={20} 
+      style={{
+        position: 'absolute',
+        left: '1rem',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        color: '#9ca3af'
+      }}
+    />
+    <input
+      type="text"
+      placeholder="Search premium products..."
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+      style={{
+        width: '100%',
+        paddingLeft: '3rem',
+        paddingRight: '1rem',
+        paddingTop: '0.75rem',
+        paddingBottom: '0.75rem',
+        background: 'rgba(255, 255, 255, 0.7)',
+        backdropFilter: 'blur(10px)',
+        border: '2px solid rgba(124, 58, 237, 0.2)', // Updated border
+        borderRadius: '1rem',
+        fontSize: '1rem',
+        transition: 'all 0.2s ease',
+        outline: 'none' // Remove default outline
+      }}
+      onFocus={(e) => {
+        e.target.style.background = 'rgba(255, 255, 255, 0.9)';
+        e.target.style.borderColor = '#7c3aed'; // Purple border on focus
+        e.target.style.boxShadow = '0 0 0 3px rgba(124, 58, 237, 0.1)';
+      }}
+      onBlur={(e) => {
+        e.target.style.background = 'rgba(255, 255, 255, 0.7)';
+        e.target.style.borderColor = 'rgba(124, 58, 237, 0.2)'; // Return to subtle border
+        e.target.style.boxShadow = 'none';
+      }}
+    />
+  </div>
+</div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
           <button

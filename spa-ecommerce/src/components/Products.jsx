@@ -1,5 +1,6 @@
 import React from 'react';
 import { Plus, Star, Heart, Truck, ArrowLeft, Search, Zap, AlertCircle } from 'lucide-react';
+import Pagination from './Pagination';
 
 const Products = ({ 
   currentPage,
@@ -16,7 +17,8 @@ const Products = ({
   cartLoading,
   setSelectedProduct,
   selectedProduct,
-  searchQuery
+  searchQuery,
+  pagination
 }) => {
 
   // Product Card Component
@@ -380,15 +382,28 @@ const Products = ({
 
         {/* Products Grid */}
         {!productsLoading && (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-            gap: '2rem'
-          }}>
-            {products.map(product => (
-              <ProductCard key={product._id} product={product} />
-            ))}
-          </div>
+          <>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+              gap: '2rem'
+            }}>
+              {products.map(product => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </div>
+
+            {/* ADD PAGINATION COMPONENT HERE */}
+            {pagination && pagination.totalPages > 1 && (
+              <Pagination 
+                currentPage={pagination.currentPage}
+                totalPages={pagination.totalPages}
+                totalProducts={pagination.totalProducts}
+                productsPerPage={pagination.productsPerPage}
+                handlePageChange={pagination.handlePageChange}
+              />
+            )}
+          </>
         )}
 
         {/* No Products Found */}
